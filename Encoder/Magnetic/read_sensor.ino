@@ -1,4 +1,6 @@
 // reference : https://blog.naver.com/i2asys/221257469969
+// Arduino mega (ADC 10bit)
+// eZencoder (12bit resolution)
 
 int sensorValue = 0;
 int sensorValue_old = 0;
