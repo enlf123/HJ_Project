@@ -1,3 +1,3 @@
 MCP3204(ADC) 
-+                                 code in Arduino
+      +                                 code in Arduino
 Ezencoder(Magnetic angle sensor)
