@@ -1,3 +1,5 @@
+// reference : https://blog.naver.com/i2asys/221257469969
+
 int sensorValue = 0;
 int sensorValue_old = 0;
 int cnt = 0;
@@ -7,6 +9,7 @@ double avg_preset = 0;
 // the setup routine runs once when you press reset:
 void setup() {
   Serial.begin(115200);
+  // initialization for removing preset
   for(int i=0;i<5;i++){
   sensorValue = analogRead(A0);
   if (sensorValue-sensorValue_old > 500) cnt = cnt - 1;
@@ -16,7 +19,6 @@ void setup() {
   preset[i] =ang;
   }
   avg_preset = (preset[0]+preset[1]+preset[2]+preset[3]+preset[4])/5;
-  Serial.println(avg_preset);
 }
 
 // the loop routine runs over and over again forever:
