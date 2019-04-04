@@ -1,10 +1,11 @@
-// MCP3204 ADC(12bit) Read
+// MCP3204 ADC(12bit) Read using Arduino Mega
 
-#define CS 4
-#define MOSI 5
-#define MISO  6
-#define CLK 7
-#define CH 1 // select ch 0~
+#define CS 10
+#define MOSI 11
+#define MISO  12
+#define CLK 13
+
+int ch = 1; // select ch 0~
 int readvalue; 
 
 double ang =0.0;
@@ -35,7 +36,7 @@ void setup(){
 
 // reading absoulte angle through ezEncoder(magnetic angle sensor)
 void loop() { 
- readvalue = read_adc(1); 
+ readvalue = read_adc(ch); 
  ang = (double)readvalue*360/4095.0;
  Serial.println(ang-avg_preset); 
  delay(10); 
