@@ -1,1 +1,14 @@
 
+general type
+
+Series elastic actuator simulation tool with matlab
+
+SEA_motor_LQR : postion controller (with inner loop - velocity controller)
+SEA_motor_PI : force controller (with inner loop - velocity controller)
+
+specification : 
+motor : MX-64 (from robotis)
+damping : 0.1Nms/rad
+spring constant : 30Nm/rad
+
+
