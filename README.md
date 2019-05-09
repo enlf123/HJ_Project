@@ -3,6 +3,6 @@ HaeJin project
 
 Hello, everybody ~
 
-This project is for control of quadruped robot
+This project is for control of haptic exoskeleton
 
 GOOD LUCK
