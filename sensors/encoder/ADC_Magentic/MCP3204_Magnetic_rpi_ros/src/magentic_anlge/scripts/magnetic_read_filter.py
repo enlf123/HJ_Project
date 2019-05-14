@@ -70,8 +70,8 @@ def avg_filter(ch):
 	for i in range(avg_num):
 		ADC = ReadAdc(ch)
 		value = ADC2ANG(ADC)
-		avg_value = ((avg_num-1.0)/avg_num)*pre_avg + 1.0/avg_num*value
-		pre_avg = float(avg_value)
+		avg_value = (((i+1.0)-1.0)/(i+1.0))*pre_avg + (1.0/(i+1.0))*value
+		pre_avg = avg_value
 	return avg_value
 	
 	
