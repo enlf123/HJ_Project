@@ -45,9 +45,10 @@ import os
 from std_msgs.msg import String
 
 ch = 0 #choose channel 0~7 (MCP3208)
+avg_num = 10
 spi = spidev.SpiDev()
 spi.open(0,0) # open(bus, device)
-spi.max_speed_hz= 5000
+spi.max_speed_hz = 500000
 
 
 def magnetic_read():
@@ -55,8 +56,7 @@ def magnetic_read():
     rospy.init_node('magnetic_read', anonymous=True)
     rate = rospy.Rate(100) # 100hz
     while not rospy.is_shutdown():
-	ADC = ReadAdc(ch)
-	value = ADC2ANG(ADC)
+	value = avg_filter()
         rospy.loginfo(value)
         pub.publish(value)
         rate.sleep()
@@ -65,7 +65,17 @@ def ADC2ANG(adc):
 	ang = adc*360/4095.0
 	return ang
 	
-
+def avg_filter():
+	pre_avg = 0
+	for i in range(avg_num):
+			ADC = ReadAdc(ch)
+			value = ADC2ANG(ADC)
+			avg_value = ((avg_num-1)/avg_num)*pre_avg + 1/avg_num*value
+			pre_avg = avg_value
+	
+	return avg_value
+	
+	
 def ReadAdc(chNum):
 
 	if chNum > 7 or chNum < 0:
