@@ -71,7 +71,7 @@ def avg_filter(ch):
 		ADC = ReadAdc(ch)
 		value = ADC2ANG(ADC)
 		avg_value = ((avg_num-1.0)/avg_num)*pre_avg + 1.0/avg_num*value
-		pre_avg = float(value)
+		pre_avg = float(avg_value)
 	return avg_value
 	
 	
