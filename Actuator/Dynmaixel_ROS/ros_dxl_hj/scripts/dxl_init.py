@@ -6,12 +6,12 @@ from dynamixel_sdk import *
 from std_msgs.msg import Int32
 
 # Control table address
-ADDR_PRO_BAUD_RATE	    = 8
+ADDR_PRO_BAUD_RATE	    	= 8
 ADDR_PRO_RETURN_TIME	    = 9
 ADDR_PRO_OPERATING_MODE	    = 11
 ADDR_PRO_HOMING_OFFSET 	    = 20
-ADDR_PRO_MAX_POS 	    = 48
-ADDR_PRO_MIN_POS 	    = 52
+ADDR_PRO_MAX_POS 	    	= 48
+ADDR_PRO_MIN_POS 	    	= 52
 ADDR_PRO_TORQUE_ENABLE      = 64               # Control table address is different in Dynamixel model
 ADDR_PRO_PROFILE_VELOCITY   = 112
 ADDR_PRO_GOAL_POSITION      = 116
@@ -27,17 +27,17 @@ PROTOCOL_VERSION            = 2.0               # See which protocol version is 
 
 # Default setting
 DXL_ID                      = 2               # Dynamixel#1 ID : 2
-BAUDRATE                    = 115200             # Dynamixel default baudrate : 115200
-DEVICENAME                  = '/dev/ttyUSB1'    # Check which port is being used on your controller
+BAUDRATE                    = 1000000             # Dynamixel default baudrate : 115200
+DEVICENAME                  = '/dev/ttyUSB0'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
-BAUD_RATE_SET		    = 2
-OPERATING_MODE		    = 3
+BAUD_RATE_SET		    	= 3
+OPERATING_MODE		    	= 4
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
 TORQUE_DISABLE              = 0                 # Value for disabling the torque
 DXL_MINIMUM_POSITION_VALUE  = 0          	# Dynamixel will rotate between this value
 DXL_MAXIMUM_POSITION_VALUE  = 4095            # and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
 DXL_MOVING_STATUS_THRESHOLD = 1                # Dynamixel moving status threshold
-DXL_RETURN_DELAY_TIME       = 0		# Dynamixel Return delay time (0*2us)
+DXL_RETURN_DELAY_TIME       = 10		# Dynamixel Return delay time (0*2us)
 
 # index = 0
 # dxl_goal_position = [DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE]         # Goal position
@@ -84,7 +84,7 @@ def dxl_init():
     elif dxl_error != 0:
         print "%s" % packetHandler.getRxPacketError(dxl_error)
     else:
-        print "Baudrate of Dynamixel is 115200" 
+        print "Baudrate of Dynamixel is 1000000" 
 
     #Set operating mode
     dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_OPERATING_MODE, OPERATING_MODE)
@@ -137,5 +137,4 @@ def dxl_init():
 if __name__ == '__main__':
     dxl_init()
     portHandler.closePort()
-
 
