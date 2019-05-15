@@ -64,17 +64,20 @@ PROTOCOL_VERSION            = 2.0               # See which protocol version is 
 
 # Default setting
 DXL_ID                      = 2               # Dynamixel#1 ID : 2
-BAUDRATE                    = 115200             # Dynamixel default baudrate : 115200
-DEVICENAME                  = '/dev/ttyUSB1'    # Check which port is being used on your controller
+BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
+DEVICENAME                  = '/dev/ttyUSB0'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
-BAUD_RATE_SET		    = 2
-OPERATING_MODE		    = 3
+
+# ** setserial /dev/ttyUSB0 low_latency - if you want more communication speed, write this in terminal   https://github.com/ROBOTIS-GIT/DynamixelSDK/issues/80
+
+BAUD_RATE_SET		    = 3
+OPERATING_MODE		    = 4
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
 TORQUE_DISABLE              = 0                 # Value for disabling the torque
 DXL_MINIMUM_POSITION_VALUE  = 0          	# Dynamixel will rotate between this value
 DXL_MAXIMUM_POSITION_VALUE  = 4095            # and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
 DXL_MOVING_STATUS_THRESHOLD = 1                # Dynamixel moving status threshold
-DXL_RETURN_DELAY_TIME       = 0		# Dynamixel Return delay time (10*2us)
+DXL_RETURN_DELAY_TIME       = 10		# Dynamixel Return delay time (10*2us)
 
 
 
@@ -87,16 +90,10 @@ portHandler = PortHandler(DEVICENAME)
 # Set the protocol version
 # Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
 packetHandler = PacketHandler(PROTOCOL_VERSION)
-
+pub = rospy.Publisher('dxl_position', Int32, queue_size=1)
 def dxl_poscon(dxl_goal_position):
-    # Write Goal Position
-    dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_PRO_GOAL_POSITION, dxl_goal_position)
-    if dxl_comm_result != COMM_SUCCESS:
-        print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-    elif dxl_error != 0:
-        print("%s" % packetHandler.getRxPacketError(dxl_error))
 
-    pub = rospy.Publisher('dxl_position', Int32, queue_size=1)
+    # Read Present Position
     dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, DXL_ID, ADDR_PRO_PRESENT_POSITION)
     if dxl_comm_result != COMM_SUCCESS:
         print "%s" % packetHandler.getTxRxResult(dxl_comm_result)
@@ -104,6 +101,13 @@ def dxl_poscon(dxl_goal_position):
         print "%s" % packetHandler.getRxPacketError(dxl_error)
     rospy.loginfo(dxl_present_position)
     pub.publish(dxl_present_position)
+
+    # Write Goal Position
+    dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_PRO_GOAL_POSITION, dxl_goal_position)
+    if dxl_comm_result != COMM_SUCCESS:
+        print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+    elif dxl_error != 0:
+        print("%s" % packetHandler.getRxPacketError(dxl_error))
 
 
 
@@ -115,8 +119,8 @@ def dxl_con():
     portHandler.openPort()
     portHandler.setBaudRate(BAUDRATE)
     rospy.init_node('dxl_con', anonymous=True)
-    while not rospy.is_shutdown():
-        rospy.Subscriber('dxl_desired_pos', Int32, callback)
+    rospy.Subscriber('dxl_desired_pos', Int32, callback)
+    rospy.spin()
 
 
 
