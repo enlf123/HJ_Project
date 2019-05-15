@@ -64,9 +64,12 @@ PROTOCOL_VERSION            = 2.0               # See which protocol version is 
 
 # Default setting
 DXL_ID                      = 2               # Dynamixel#1 ID : 2
-BAUDRATE                    = 115200             # Dynamixel default baudrate : 57600
-DEVICENAME                  = '/dev/ttyUSB1'    # Check which port is being used on your controller
+BAUDRATE                    = 1000000             # Dynamixel default baudrate : 57600
+DEVICENAME                  = '/dev/ttyUSB0'    # Check which port is being used on your controller
                                                 # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
+
+# ** setserial /dev/ttyUSB0 low_latency - if you want more communication speed, write this in terminal   https://github.com/ROBOTIS-GIT/DynamixelSDK/issues/80
+
 
 # Initialize PortHandler instance
 # Set the port path
@@ -79,13 +82,15 @@ portHandler = PortHandler(DEVICENAME)
 packetHandler = PacketHandler(PROTOCOL_VERSION)
 
 def dxl_pos_read():
+    portHandler.openPort()
+    portHandler.setBaudRate(BAUDRATE)
 
     pub = rospy.Publisher('dxl_pos', Int32, queue_size=1)
     rospy.init_node('dxl_pos_read', anonymous=True)
-    rate = rospy.Rate(100) # 100hz
+    rate = rospy.Rate(500) # 100hz
     while not rospy.is_shutdown():
-        portHandler.openPort()
-        portHandler.setBaudRate(BAUDRATE)
+#        portHandler.openPort()
+#        portHandler.setBaudRate(BAUDRATE)
         dxl_present_position, dxl_comm_result, dxl_error = packetHandler.read4ByteTxRx(portHandler, DXL_ID, ADDR_PRO_PRESENT_POSITION)
         if dxl_comm_result != COMM_SUCCESS:
             print "%s" % packetHandler.getTxRxResult(dxl_comm_result)
@@ -93,8 +98,8 @@ def dxl_pos_read():
             print "%s" % packetHandler.getRxPacketError(dxl_error)
         rospy.loginfo(dxl_present_position)
         pub.publish(dxl_present_position)
-        portHandler.closePort()
-      #  rate.sleep()
+#        portHandler.closePort()
+        rate.sleep()
 
 
 if __name__ == '__main__':
