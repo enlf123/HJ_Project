@@ -7,4 +7,6 @@ Noise depending on Power source
 std of Noise - solve : average filter
 
 MCP3204 spi communication hz > change the analog output (maybe... higher byte is cut?)
-
+ solve : spi_hz = 500000
+ 
+ 
