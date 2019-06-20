@@ -1,8 +1,5 @@
 // MCP3204 ADC(12bit) Read using Arduino Mega
 
-
-// MCP3204 ADC(12bit) Read using Arduino Mega
-
 #define CS 10 
 #define DI 11
 #define DO 12
