@@ -1,4 +1,3 @@
-
 // MCP3204 ADC(12bit) Read using Arduino Mega
 
 #define CS 10 
@@ -9,12 +8,11 @@
 int ch = 0; // select ch 0~
 
 double ang =0.0;
-int avg_num =8;
+int avg_num =4;
 
-
+double cnt = 0;
+int pre_adc = 0;
 unsigned long pre, cur;
-
-
 void setup(){ 
   //set pin modes 
   pinMode(CS, OUTPUT); 
@@ -27,7 +25,8 @@ void setup(){
   digitalWrite(SPICLOCK,LOW); 
 
   Serial.begin(115200);
-  pre = micros();
+  cur =micros();
+  pre = cur;
 } 
 
 // reading absoulte angle through ezEncoder(magnetic angle sensor)
@@ -35,9 +34,10 @@ void loop() {
   cur = micros();
   if (cur-pre > 2000){
     ang = avg_filter(ch);
-    Serial.println(ang); 
-    Serial.println(cur-pre);
-    pre = micros();
+    //Serial.println(ang);
+    Serial.println(ang);
+    //delayMicroseconds(100);
+    pre = cur;
   }
 } 
 
@@ -75,15 +75,24 @@ int read_adc(int channel){
 }
 
 double ADC2ANG(int adc){
-  double ANG = double(adc)*360.0/4095.0;
+  if (adc-pre_adc > 500){
+    cnt = cnt-1;
+  }
+  else if (adc-pre_adc < -500){
+    cnt = cnt+1;
+  }
+  double ANG = cnt*360.0+double(adc)*360.0/4095.0;
+  pre_adc = adc;
   return ANG;
 }
 
 double avg_filter(int ch){
-  double value, avg_value;
-  double pre_avg = 0.0;
+  
+double value, avg_value;
+double pre_avg = 0.0;
   for(double i=0.0;i<avg_num;i++){
     value = ADC2ANG(read_adc(ch));
+   // value = read_adc(ch);
     avg_value = (((i+1.0)-1.0)/(i+1.0))*pre_avg + (1.0/(i+1.0))*value;
     pre_avg = avg_value;
 
@@ -91,5 +100,3 @@ double avg_filter(int ch){
 
   return avg_value;
 }
-
-
